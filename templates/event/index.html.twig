@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Event index{% endblock %}
+
+{% block body %}
+    <h1>Event index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Image</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Price</th>
+                <th>Total Seats</th>
+                <th>Available Seats</th>
+                <th>City</th>
+                <th>Country</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for event in events %}
+            <tr>
+                <td>{{ event.id }}</td>
+                <td>{{ event.title }}</td>
+                <td>{{ event.description }}</td>
+                <td>
+                    {% if event.picFileName %}
+                        <img src="{{ asset('uploads/events/' ~ event.picFileName) }}" alt="{{ event.title }}" style="max-width: 100px; max-height: 100px;">
+                    {% else %}
+                        No image
+                    {% endif %}
+                </td>
+                <td>{{ event.startDate ? event.startDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ event.endDate ? event.endDate|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ event.price == 0 ? 'Free' : event.price }}</td>
+                <td>{{ event.totalSeats }}</td>
+                <td>{{ event.availableSeats }}</td>
+                <td>
+                    {% for city in event.cities %}
+                        {{ city.name }}
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for city in event.cities %}
+                        {{ city.country.name }}
+                    {% endfor %}
+                </td>
+                <td>
+                    <a href="{{ path('app_event_show', {'id': event.id}) }}">Show</a>
+                    <a href="{{ path('app_event_edit', {'id': event.id}) }}">Edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="12">No records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_event_new') }}">Create new</a>
+{% endblock %}
