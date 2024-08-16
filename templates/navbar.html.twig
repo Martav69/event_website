@@ -22,10 +22,10 @@
           <a href="{{ path('app_event_index') }}" class="block py-2 px-3 rounded {{ 'event' in route ? 'active' : 'inactive' }}">Evénements</a>
         </li>
         <li>
-          <a href="#" class="block py-2 px-3 rounded {{ 'location' in route ? 'active' : 'inactive' }}">Catégorie</a>
+          <a href="{{ path('app_category') }}" class="block py-2 px-3 rounded {{ 'category' in route ? 'active' : 'inactive' }}">Catégorie</a>
         </li>
         <li>
-          <a href="#" class="block py-2 px-3 rounded {{ 'creation' in route ? 'active' : 'inactive' }}">Crée un évenement</a>
+          <a href="{{ path('app_event_new') }}" class="block py-2 px-3 rounded {{ 'creation' in route ? 'active' : 'inactive' }}">Crée un évenement</a>
         </li>
         <li>
           <a href="#" class="block py-2 px-3 rounded {{ 'user' in route ? 'active' : 'inactive' }}">Liste Utilisateur</a>

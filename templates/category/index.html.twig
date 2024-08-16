@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Choose Your Sport{% endblock %}
+
+{% block body %}
+<div class="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-indigo-950 min-h-screen py-12">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200 text-center mb-8">Choose Your Sport</h1>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {% for category in categories %}
+                <a href="{{ path('category_catalog', {'id': category.id}) }}" class="block bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center hover:bg-indigo-50 dark:hover:bg-indigo-700 transition duration-300 transform hover:scale-105">
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">{{ category.name }}</h2>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

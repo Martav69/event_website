@@ -3,11 +3,21 @@
 {% block title %}Edit Event{% endblock %}
 
 {% block body %}
-    <h1>Edit Event</h1>
+<div class="bg-gradient-to-br from-blue-100 to-indigo-200 dark:from-gray-900 dark:to-indigo-900 min-h-screen">
+    <div class="container mx-auto px-4 py-16">
+        <h1 class="text-3xl font-bold text-indigo-800 dark:text-indigo-300 mb-8 text-center">Edit Event</h1>
 
-    {{ include('event/_form.html.twig', {'button_label': 'Update'}) }}
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+            {{ include('event/_form.html.twig', {'button_label': 'Update'}) }}
+        </div>
 
-    <a href="{{ path('app_event_index') }}">back to list</a>
+        <div class="mt-8 flex justify-between items-center">
+            <a href="{{ path('app_event_index') }}" class="text-white bg-indigo-600 hover:bg-indigo-700 font-bold py-3 px-6 rounded-full transition duration-300 transform hover:scale-105">
+                <i class="fas fa-arrow-left"></i> Back to List
+            </a>
 
-    {{ include('event/_delete_form.html.twig') }}
+            {{ include('event/_delete_form.html.twig') }}
+        </div>
+    </div>
+</div>
 {% endblock %}

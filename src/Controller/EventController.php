@@ -93,14 +93,21 @@ class EventController extends AbstractController
     #[Route('/{id}/edit', name: 'app_event_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Event $event, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
+        // On récupère la première ville lié à l'event
+        $city = $event->getCities()->first();
+        
+        // On crée le formulaire et pré-remplis les données manuellement car unmapped sur le formulaire pour crée de nouvelles entité si elles n'existe pas 
         $form = $this->createForm(EventType::class, $event);
+        $form->get('country')->setData($city ? $city->getCountry() : null);
+        $form->get('cityName')->setData($city ? $city->getName() : '');
+    
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
-
+    
             /** @var \Symfony\Component\HttpFoundation\File\UploadedFile $picFile */
             $picFile = $form->get('picFile')->getData();
-
+    
             if ($picFile) {
                 // Supprime l'ancienne image si elle existe
                 if ($event->getPicFileName()) {
@@ -109,29 +116,51 @@ class EventController extends AbstractController
                         unlink($oldFile);
                     }
                 }
-
+    
                 $originalFilename = pathinfo($picFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
                 $filename = $safeFilename . '-' . uniqid() . '.' . $picFile->guessExtension();
-
+    
                 try {
                     $picFile->move(
                         $this->getParameter('uploads_event_directory'),
                         $filename
                     );
-
+    
                     $event->setPicFileName($filename);
                     
                 } catch (FileException $e) {
                     $form->addError(new FormError("Erreur lors de l'upload du fichier"));
                 }
             }
-
+    
+            // Gestion de la ville et du pays
+            $country = $form->get('country')->getData();
+            $cityName = $form->get('cityName')->getData();
+    
+            // Vérification si la ville existe déjà pour ce pays
+            $city = $em->getRepository(City::class)->findOneBy([
+                'name' => $cityName,
+                'country' => $country,
+            ]);
+    
+            // Si la ville n'existe pas, on la crée
+            if (!$city) {
+                $city = new City();
+                $city->setName($cityName);
+                $city->setCountry($country);
+                $em->persist($city);
+                $em->flush();
+            }
+    
+            // Associe la ville à l'événement
+            $event->addCity($city);
+    
             $em->flush();
-
+    
             return $this->redirectToRoute('app_event_index', [], Response::HTTP_SEE_OTHER);
         }
-
+    
         return $this->render('event/edit.html.twig', [
             'event' => $event,
             'form' => $form->createView(),

@@ -1,4 +1,10 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+{{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+    <div class="space-y-4">
+        {{ form_widget(form, {'attr': {'class': 'form-input block w-full mt-1 rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500'}}) }}
+    </div>
+    <div class="text-center">
+        <button class="text-white bg-indigo-600 hover:bg-indigo-700 font-bold py-3 px-6 rounded-full transition duration-300 transform hover:scale-105">
+            {{ button_label|default('Save') }}
+        </button>
+    </div>
 {{ form_end(form) }}
