@@ -163,6 +163,11 @@ class EventController extends AbstractController
                 $em->persist($city);
                 $em->flush();
             }
+
+            // Supprimer toutes les villes existantes liées à l'événement
+            foreach ($event->getCities() as $existingCity) {
+            $event->removeCity($existingCity);
+        }
     
             // Associe la ville à l'événement
             $event->addCity($city);
