@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\City;
 use App\Entity\Event;
 use App\Form\EventType;
+use App\Repository\CategoryRepository;
 use App\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -20,9 +21,19 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class EventController extends AbstractController
 {
     #[Route('/', name: 'app_event_index', methods: ['GET'])]
-    public function index(EventRepository $eventRepository, PaginatorInterface $paginator, Request $request): Response
+    public function index(EventRepository $eventRepository,CategoryRepository $categoryRepository, PaginatorInterface $paginator, Request $request): Response
     {
         $searchTerm = $request->query->get('search','');
+
+        $sort = $request->query->get('sort','title'); // tri par défaut par titre
+        $direction = $request->query->get('direction', 'asc'); // ascendant par défaut
+        $selectedCategory = $request->query->get('category');
+        $minPrice = $request->query->get('minPrice');
+        $maxPrice = $request->query->get('maxPrice');
+
+        //recuperer les categories pour le formulaire de filtre
+        $categories = $categoryRepository->findAll();
+
         // création de la requete pour la recherche
         $queryBuilder = $eventRepository->createQueryBuilder('e')
             ->leftJoin('e.category', 'c')
@@ -31,7 +42,24 @@ class EventController extends AbstractController
             ->orWhere('c.name LIKE :searchTerm')
             ->orWhere('e.description LIKE :searchTerm')
             ->orWhere('city.name LIKE :searchTerm')
-            ->setParameter('searchTerm', '%'. $searchTerm.'%');
+            ->setParameter('searchTerm', '%'. $searchTerm.'%')
+            ->orderBy('e.' . $sort, $direction); // tri dynamique
+
+        // Filtre par catégorie
+        if ($selectedCategory) {
+            $queryBuilder->andWhere('c.id = :category')
+                ->setParameter('category', $selectedCategory);
+        }
+
+            // Filtre par plage de prix
+         if ($minPrice) {
+        $queryBuilder->andWhere('e.price >= :minPrice')
+            ->setParameter('minPrice', $minPrice);
+         }
+         if ($maxPrice) {
+        $queryBuilder->andWhere('e.price <= :maxPrice')
+            ->setParameter('maxPrice', $maxPrice);
+        }
 
 
         //mise en place de la pagination ici
@@ -42,7 +70,14 @@ class EventController extends AbstractController
         );
 
         return $this->render('event/index.html.twig', [
-            'pagination' => $pagination
+            'pagination' => $pagination,
+            'searchTerm' => $searchTerm,
+            'sort' => $sort,
+            'direction' => $direction,
+            'minPrice' => $minPrice,
+            'maxPrice' => $maxPrice,
+            'categories' => $categories,
+            'selectedCategory' => $selectedCategory,
         ]);
     }
 
