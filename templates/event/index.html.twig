@@ -8,7 +8,7 @@
         <h1 class="text-3xl font-bold text-indigo-800 dark:text-indigo-300 mb-8 text-center">Our Upcoming Events</h1>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {% for event in events %}
+            {% for event in pagination %}
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105">
                     {% if event.picFileName %}
                         <img class="w-full h-48 object-cover" src="{{ asset('uploads/events/' ~ event.picFileName) }}" alt="{{ event.title }}">
@@ -60,6 +60,13 @@
             <a href="{{ path('app_event_new') }}" class="inline-block text-white bg-green-600 hover:bg-green-700 font-bold py-3 px-6 rounded-full transition duration-300 transform hover:scale-105">
                 <i class="fas fa-plus-circle"></i> Create new event
             </a>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="mt-8">
+            <div class="flex justify-center">
+                {{ knp_pagination_render(pagination) }}
+            </div>
         </div>
     </div>
 </div>

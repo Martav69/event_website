@@ -7,6 +7,7 @@ use App\Entity\Event;
 use App\Form\EventType;
 use App\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -19,10 +20,20 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class EventController extends AbstractController
 {
     #[Route('/', name: 'app_event_index', methods: ['GET'])]
-    public function index(EventRepository $eventRepository): Response
+    public function index(EventRepository $eventRepository, PaginatorInterface $paginator, Request $request): Response
     {
+        // on récupère ici tout les evenements
+        $queryBuilder = $eventRepository->createQueryBuilder('e');
+
+        //mise en place de la pagination ici
+        $pagination = $paginator->paginate(
+            $queryBuilder->getQuery(),
+            $request->query->getInt('page', 1), 
+            6 // Nombre d'éléments par page
+        );
+
         return $this->render('event/index.html.twig', [
-            'events' => $eventRepository->findAll(),
+            'pagination' => $pagination
         ]);
     }
 
