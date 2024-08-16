@@ -22,8 +22,17 @@ class EventController extends AbstractController
     #[Route('/', name: 'app_event_index', methods: ['GET'])]
     public function index(EventRepository $eventRepository, PaginatorInterface $paginator, Request $request): Response
     {
-        // on récupère ici tout les evenements
-        $queryBuilder = $eventRepository->createQueryBuilder('e');
+        $searchTerm = $request->query->get('search','');
+        // création de la requete pour la recherche
+        $queryBuilder = $eventRepository->createQueryBuilder('e')
+            ->leftJoin('e.category', 'c')
+            ->leftJoin('e.cities', 'city')
+            ->where('e.title LIKE :searchTerm')
+            ->orWhere('c.name LIKE :searchTerm')
+            ->orWhere('e.description LIKE :searchTerm')
+            ->orWhere('city.name LIKE :searchTerm')
+            ->setParameter('searchTerm', '%'. $searchTerm.'%');
+
 
         //mise en place de la pagination ici
         $pagination = $paginator->paginate(
