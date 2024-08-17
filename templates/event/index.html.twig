@@ -5,7 +5,6 @@
 {% block body %}
 <div class="bg-gradient-to-br from-blue-100 to-indigo-200 dark:from-gray-900 dark:to-indigo-900 min-h-screen">
     <div class="container mx-auto px-4 py-16">
-
         <div class="flex">
             <!-- Menu de Filtrage à Gauche -->
             <aside class="w-1/4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg">
@@ -27,21 +26,36 @@
                     </div>
 
                     <div class="mb-4">
-                        <label for="minPrice" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Min Price</label>
-                        <input type="number" id="minPrice" name="minPrice" value="{{ minPrice }}" class="w-full py-2 px-4 rounded border dark:bg-gray-700 dark:text-white">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Price Range</label>
+                        <div id="price-range-slider" class="slider"></div>
+                        <div class="flex justify-between text-sm text-gray-600 dark:text-gray-300 mt-2">
+                            <span>€<span id="min-price-display">{{ minPrice ?: 0 }}</span></span>
+                            <span>€<span id="max-price-display">{{ maxPrice ?: 300 }}</span></span>
+                        </div>
+                        <!-- Hidden inputs for form submission -->
+                        <input type="hidden" id="minPrice" name="minPrice" value="{{ minPrice }}">
+                        <input type="hidden" id="maxPrice" name="maxPrice" value="{{ maxPrice }}">
                     </div>
 
-                    <div class="mb-4">
-                        <label for="maxPrice" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Max Price</label>
-                        <input type="number" id="maxPrice" name="maxPrice" value="{{ maxPrice }}" class="w-full py-2 px-4 rounded border dark:bg-gray-700 dark:text-white">
-                    </div>
+                    <button type="submit" class="w-full py-2 px-4 bg-indigo-600 text-white font-bold rounded transition duration-300 transform hover:scale-105">Apply Filters</button>
 
-                    <button type="submit" class="w-full py-2 px-4 bg-indigo-600 text-white font-bold rounded">Apply Filters</button>
+                    
+
                 </form>
             </aside>
 
             <!-- Liste des Événements à Droite -->
             <div class="w-3/4 pl-8">
+                <!-- Liens de Tri -->
+                <div class="flex justify-end space-x-4 mb-8">
+                    <a href="{{ path('app_event_index', {search: searchTerm, sort: 'price', direction: 'asc', category: selectedCategory, minPrice: minPrice, maxPrice: maxPrice}) }}" class="text-sm font-bold {{ sort == 'price' and direction == 'asc' ? 'text-indigo-600' : 'text-gray-600' }}">Price ↑</a>
+                    <a href="{{ path('app_event_index', {search: searchTerm, sort: 'price', direction: 'desc', category: selectedCategory, minPrice: minPrice, maxPrice: maxPrice}) }}" class="text-sm font-bold {{ sort == 'price' and direction == 'desc' ? 'text-indigo-600' : 'text-gray-600' }}">Price ↓</a>
+                    <a href="{{ path('app_event_index', {search: searchTerm, sort: 'startDate', direction: 'asc', category: selectedCategory, minPrice: minPrice, maxPrice: maxPrice}) }}" class="text-sm font-bold {{ sort == 'startDate' and direction == 'asc' ? 'text-indigo-600' : 'text-gray-600' }}">Date ↑</a>
+                    <a href="{{ path('app_event_index', {search: searchTerm, sort: 'startDate', direction: 'desc', category: selectedCategory, minPrice: minPrice, maxPrice: maxPrice}) }}" class="text-sm font-bold {{ sort == 'startDate' and direction == 'desc' ? 'text-indigo-600' : 'text-gray-600' }}">Date ↓</a>
+                    <a href="{{ path('app_event_index', {search: searchTerm, sort: 'title', direction: 'asc', category: selectedCategory, minPrice: minPrice, maxPrice: maxPrice}) }}" class="text-sm font-bold {{ sort == 'title' and direction == 'asc' ? 'text-indigo-600' : 'text-gray-600' }}">Alphabetical ↑</a>
+                    <a href="{{ path('app_event_index', {search: searchTerm, sort: 'title', direction: 'desc', category: selectedCategory, minPrice: minPrice, maxPrice: maxPrice}) }}" class="text-sm font-bold {{ sort == 'title' and direction == 'desc' ? 'text-indigo-600' : 'text-gray-600' }}">Alphabetical ↓</a>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {% for event in pagination %}
                         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105">
@@ -101,4 +115,38 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let slider = new RangeSlider('#price-range-slider', {
+            values: [{{ minPrice ?: 0 }}, {{ maxPrice ?: 300 }}],
+            step: 10,
+            min: 0,
+            max: 300,
+            colors: {
+                points: "#4F46E5",
+                rail: "#E5E7EB",
+                tracks: "#4F46E5"
+            },
+            pointRadius: 10,
+            railHeight: 4,
+            trackHeight: 4
+        });
+
+        slider.onChange(values => {
+            document.getElementById('minPrice').value = values[0];
+            document.getElementById('maxPrice').value = values[1];
+            document.getElementById('min-price-display').textContent = values[0];
+            document.getElementById('max-price-display').textContent = values[1];
+        });
+    });
+</script>
+
+
+
+
+
+
+
+    
 {% endblock %}

@@ -25,7 +25,7 @@ class EventController extends AbstractController
     {
         $searchTerm = $request->query->get('search','');
 
-        $sort = $request->query->get('sort','title'); // tri par défaut par titre
+        $sort = $request->query->get('sort','startDate'); // tri par défaut par titre
         $direction = $request->query->get('direction', 'asc'); // ascendant par défaut
         $selectedCategory = $request->query->get('category');
         $minPrice = $request->query->get('minPrice');
@@ -42,8 +42,32 @@ class EventController extends AbstractController
             ->orWhere('c.name LIKE :searchTerm')
             ->orWhere('e.description LIKE :searchTerm')
             ->orWhere('city.name LIKE :searchTerm')
-            ->setParameter('searchTerm', '%'. $searchTerm.'%')
-            ->orderBy('e.' . $sort, $direction); // tri dynamique
+            ->setParameter('searchTerm', '%'. $searchTerm.'%');
+
+            // Debug information
+            dump($sort, $direction);
+
+        // Changement de la method orderby
+        switch($sort) {
+            case 'price':
+                $queryBuilder->orderBy('e.price', $direction);
+                break;
+            case 'startDate':
+                $queryBuilder->orderBy('e.startDate', $direction);
+                break;
+            case 'title':
+                $queryBuilder->orderBy('e.title', $direction);
+                break;
+            default:
+                $queryBuilder->orderBy('e.startDate', $direction);
+        }
+
+        dump($queryBuilder->getDQL());
+
+
+
+
+
 
         // Filtre par catégorie
         if ($selectedCategory) {
@@ -66,7 +90,11 @@ class EventController extends AbstractController
         $pagination = $paginator->paginate(
             $queryBuilder->getQuery(),
             $request->query->getInt('page', 1), 
-            6 // Nombre d'éléments par page
+            6, // Nombre d'éléments par page
+            [
+                'defaultSortFieldName' => null,
+                'defaultSortDirection' => null, 
+            ]
         );
 
         return $this->render('event/index.html.twig', [
