@@ -50,6 +50,10 @@ class Event
     #[ORM\ManyToMany(targetEntity: City::class, inversedBy: 'events')]
     private Collection $cities;
 
+    #[ORM\ManyToOne(inversedBy: 'events')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $author = null;
+
     public function __construct()
     {
         $this->cities = new ArrayCollection();
@@ -188,6 +192,18 @@ class Event
     public function removeCity(City $city): static
     {
         $this->cities->removeElement($city);
+
+        return $this;
+    }
+
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?User $author): static
+    {
+        $this->author = $author;
 
         return $this;
     }

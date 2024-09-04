@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/event')]
@@ -25,7 +26,7 @@ class EventController extends AbstractController
     {
         $searchTerm = $request->query->get('search','');
 
-        $sort = $request->query->get('sort','startDate'); // tri par défaut par titre
+        $sort = $request->query->get('sort','startDate'); // tri par défaut par date 
         $direction = $request->query->get('direction', 'asc'); // ascendant par défaut
         $selectedCategory = $request->query->get('category');
         $minPrice = $request->query->get('minPrice');
@@ -44,8 +45,8 @@ class EventController extends AbstractController
             ->orWhere('city.name LIKE :searchTerm')
             ->setParameter('searchTerm', '%'. $searchTerm.'%');
 
-            // Debug information
-            dump($sort, $direction);
+            // Info pour debug utilisé lors de la construction des requetes 
+           // dump($sort, $direction);
 
         // Changement de la method orderby
         switch($sort) {
@@ -176,6 +177,10 @@ class EventController extends AbstractController
     #[Route('/{id}/edit', name: 'app_event_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Event $event, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
+                // On vérifie si c'est un admin ou l'auteur de l'article 
+        if ($event->getAuthor() !== $this->getUser() && !$this->isGranted('ROLE_ADMIN')) {
+            throw new AccessDeniedException('You do not have permission to edit this event.');
+        }
         // On récupère la première ville lié à l'event
         $city = $event->getCities()->first();
         
@@ -266,6 +271,10 @@ class EventController extends AbstractController
     #[Route('/{id}', name: 'app_event_delete', methods: ['POST'])]
     public function delete(Request $request, Event $event, EntityManagerInterface $em): Response
     {
+                // On verifie que ce soit l'autheur ou l'admin
+        if ($event->getAuthor() !== $this->getUser() && !$this->isGranted('ROLE_ADMIN')) {
+            throw new AccessDeniedException('You do not have permission to edit this event.');
+        }
         if ($this->isCsrfTokenValid('delete'.$event->getId(), $request->get('_token'))) {
             $em->remove($event);
             $em->flush();

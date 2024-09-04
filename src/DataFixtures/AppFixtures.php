@@ -6,9 +6,11 @@ use App\Entity\Category;
 use App\Entity\City;
 use App\Entity\Country;
 use App\Entity\Event;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 
 
@@ -17,6 +19,12 @@ class AppFixtures extends Fixture
 {
 
     private const CATEGORIES_NAMES = ['Football', 'Basket', 'Tennis','Rugby' ,'MMA','Arts Martiaux','Athlétisme','Natation','Course', 'Volleyball'];
+
+    public function __construct(
+        private UserPasswordHasherInterface $hasher
+        ){
+        }
+
 
     public function load(ObjectManager $manager): void
     {
@@ -61,6 +69,31 @@ class AppFixtures extends Fixture
         $villes[$i] = $ville;
        }
 
+        // Create users
+        $users = [];
+        for ($i = 0; $i < 10; $i++) {
+            $user = new User();
+            $user->setEmail("user{$i}@test.com");
+            $user->setUsername("user{$i}");
+            $user->setRoles(['ROLE_USER']);
+            $hashedPassword = $this->hasher->hashPassword($user, 'user1234');
+            $user->setPassword($hashedPassword);
+
+            $manager->persist($user);
+            $users[$i] = $user;
+        }
+
+        // Create admin user
+        $admin = new User();
+        $admin->setEmail('admin@test.com');
+        $admin->setUsername('admin');
+        $admin->setRoles(['ROLE_ADMIN']);
+        $hashedPassword = $this->hasher->hashPassword($admin, 'admin1234');
+        $admin->setPassword($hashedPassword);
+
+        $manager->persist($admin);
+
+
        // Populate des events
        for ($i=0; $i < 10 ; $i++) { 
 
@@ -84,6 +117,7 @@ class AppFixtures extends Fixture
 
          $event->setCategory($faker->randomElement($categories));
          $event->addCity($faker->randomElement($villes));
+         $event->setAuthor($faker->randomElement($users));
 
          $manager->persist($event);
 
