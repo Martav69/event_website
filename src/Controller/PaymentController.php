@@ -24,7 +24,7 @@ class PaymentController extends AbstractController
 
         return $this->render('payment/checkout.html.twig', [
             'stripe_public_key' => $_ENV['STRIPE_PUBLIC_KEY'],
-            'event' => $event, // Pass the event to the template
+            'event' => $event, // On envoie l'event a la template
         ]);
     }
 
