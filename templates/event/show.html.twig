@@ -96,10 +96,11 @@
             <!-- Price and CTA -->
             <div class="text-center">
                 <p class="text-3xl font-bold text-indigo-800 dark:text-indigo-300 mb-6">{{ event.price == 0 ? 'FREE' : event.price ~ ' €' }}</p>
-                <a href="#" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-10 rounded-full shadow-lg transition duration-300 transform hover:scale-110">
+                <a href="{{ path('event_checkout', {'id': event.id}) }}" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-10 rounded-full shadow-lg transition duration-300 transform hover:scale-110">
                     Book Now
                 </a>
             </div>
+
         </div>
 
         <!-- Action Buttons -->

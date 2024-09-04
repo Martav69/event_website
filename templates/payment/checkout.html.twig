@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Checkout for {{ event.title }}{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-16">
+    <h1 class="text-2xl font-bold text-indigo-600 mb-4">Checkout for {{ event.title }}</h1>
+    <p class="text-lg mb-4">Price: {{ event.price == 0 ? 'FREE' : event.price ~ ' €' }}</p>
+
+    <button id="checkout-button" class="bg-indigo-600 text-white px-4 py-2 rounded-full">
+        Proceed to Payment
+    </button>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        document.getElementById('checkout-button').addEventListener('click', function () {
+            fetch("/create-checkout-session/{{ event.id }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                const stripe = Stripe("{{ stripe_public_key }}");
+                return stripe.redirectToCheckout({ sessionId: data.id });
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</div>
+{% endblock %}
