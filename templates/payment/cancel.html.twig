@@ -3,6 +3,26 @@
 {% block title %}Payment Cancelled{% endblock %}
 
 {% block body %}
-<h1 class="text-center text-red-600">Payment Cancelled</h1>
-<p class="text-center">Your payment was cancelled. Please try again.</p>
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-cool-gray-100 dark:from-slate-900 dark:to-gray-800 py-16 flex items-center justify-center">
+    <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-10 max-w-lg w-full text-center">
+        <!-- Error Message -->
+        <h1 class="text-4xl font-bold text-red-600 dark:text-red-400 mb-6 animate__animated animate__fadeInDown">
+            Payment Cancelled
+        </h1>
+
+        <p class="text-lg text-gray-700 dark:text-gray-300 mb-10">
+            Your payment was cancelled. Please try again or contact support.
+        </p>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-center space-x-4 animate__animated animate__fadeInUp delay-1s">
+            <a href="{{ path('app_event_index') }}" class="cta-button bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-full">
+                Return to Events
+            </a>
+            <a href="{{ path('home_page') }}" class="cta-button bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-full">
+                Go to Home
+            </a>
+        </div>
+    </div>
+</div>
 {% endblock %}

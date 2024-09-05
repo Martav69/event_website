@@ -3,6 +3,40 @@
 {% block title %}Payment Success{% endblock %}
 
 {% block body %}
-<h1 class="text-center text-green-600">Payment Successful</h1>
-<p class="text-center">Thank you for your booking!</p>
+<div class="min-h-screen bg-gradient-to-br from-green-100 to-teal-200 dark:from-gray-900 dark:to-green-900 flex items-center justify-center">
+    <div class="text-center space-y-8 relative z-10">
+        <!-- Celebration Animation (Optional) -->
+        <div class="absolute inset-0 overflow-hidden" id="confetti"></div>
+
+        <h1 class="text-5xl font-extrabold text-green-600 dark:text-lime-400 animate__animated animate__zoomIn">
+            Payment Successful! 🎉
+        </h1>
+        <p class="text-xl text-gray-700 dark:text-gray-300 animate__animated animate__fadeInUp delay-1s">
+            Thank you for your booking! We look forward to seeing you at the event.
+        </p>
+        
+        <!-- Action Buttons -->
+        <div class="flex justify-center space-x-4 animate__animated animate__fadeInUp delay-2s">
+            <a href="{{ path('app_event_index') }}" class="cta-button bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-full">
+                Explore More Events
+            </a>
+            <a href="{{ path('home_page') }}" class="cta-button bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-full">
+                Return to Home
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Confetti Animation Script -->
+<script>
+    function createConfetti() {
+        var confettiSettings = { target: 'confetti' };
+        var confetti = new ConfettiGenerator(confettiSettings);
+        confetti.render();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        createConfetti();
+    });
+</script>
 {% endblock %}

@@ -11,6 +11,15 @@
     }
   }
 
+/* Confetti Styling (Optional) */
+#confetti {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
 
 
   /* CSS POUR PAGINATOR */

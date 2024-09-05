@@ -3,30 +3,43 @@
 {% block title %}Checkout for {{ event.title }}{% endblock %}
 
 {% block body %}
-<div class="container mx-auto px-4 py-16">
-    <h1 class="text-2xl font-bold text-indigo-600 mb-4">Checkout for {{ event.title }}</h1>
-    <p class="text-lg mb-4">Price: {{ event.price == 0 ? 'FREE' : event.price ~ ' €' }}</p>
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-cool-gray-100 dark:from-slate-900 dark:to-gray-800 py-16 flex items-center justify-center">
+    <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-10 max-w-lg w-full">
+        <!-- Event Title -->
+        <h1 class="text-3xl font-extrabold text-indigo-600 dark:text-indigo-400 mb-6 text-center tracking-tight">
+            Checkout for {{ event.title }}
+        </h1>
 
-    <button id="checkout-button" class="bg-indigo-600 text-white px-4 py-2 rounded-full">
-        Proceed to Payment
-    </button>
+        <!-- Price Display -->
+        <p class="text-2xl font-light text-gray-700 dark:text-gray-300 text-center mb-10">
+            Price: <span class="font-semibold">{{ event.price == 0 ? 'FREE' : event.price ~ ' €' }}</span>
+        </p>
 
-    <script src="https://js.stripe.com/v3/"></script>
-    <script>
-        document.getElementById('checkout-button').addEventListener('click', function () {
-            fetch("/create-checkout-session/{{ event.id }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                const stripe = Stripe("{{ stripe_public_key }}");
-                return stripe.redirectToCheckout({ sessionId: data.id });
-            })
-            .catch(error => console.error('Error:', error));
-        });
-    </script>
+        <!-- CTA Button -->
+        <div class="flex justify-center">
+            <button id="checkout-button" class="cta-button bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                Proceed to Payment
+            </button>
+        </div>
+    </div>
 </div>
+
+<!-- Stripe Script -->
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    document.getElementById('checkout-button').addEventListener('click', function () {
+        fetch("/create-checkout-session/{{ event.id }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            const stripe = Stripe("{{ stripe_public_key }}");
+            return stripe.redirectToCheckout({ sessionId: data.id });
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>
 {% endblock %}
