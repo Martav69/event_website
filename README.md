@@ -34,7 +34,7 @@ composer install
 
 ```
 
-3 - Create the .env.local file and configure your database connection:
+3 - Create the `.env.local\` file and configure your database connection:
 
 ```bash
 
