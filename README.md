@@ -85,6 +85,25 @@ Once logged in, users can search events by various parameters such as category, 
 ### Stripe Payment
 The application integrates with Stripe for secure payments. Users are redirected to a checkout page to complete their purchase for paid events.
 
+## Files To See 
+
+### EventController 
+With the request and the manipulation and creation of all the filter 
+The handling of the country and city with the link between them depending if it already exist or not 
+
+### PaymentController 
+Dependency injection to have a price that update himself in link with the event price 
+
+### AppFixtures
+Using different Method to populate the databases
+With a populate of the country with the help of a JSON File using the umpirsky package 
+
+### Form/EventType 
+Manipulation of the city and the country, to manipulate them as i wanted. 
+So it's unmapped to manipulate them after in the event controller. 
+
+
+
 ## Challenges Faced
 
 > [!IMPORTANT]
