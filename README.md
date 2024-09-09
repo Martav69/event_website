@@ -1,6 +1,6 @@
 # SportHub 
 ## Overview 
-SportHub is a sports event website I developed using Symfony 6.4 with PHP 8.3. I used Tailwind CSS for the front-end and Twig templates for rendering. This platform is designed to allow users to create, search, and manage sports events. Whether you're a sports club, a private coach, or just looking for local events, SportHub provides a user-friendly interface to do so. ![Homepage with Event Filters](./screenshots/homepage.png) 
+SportHub is a sports event website I developed using Symfony 6.4 with PHP 8.3. I used Tailwind CSS for the front-end and Twig templates for rendering. This platform is designed to allow users to create, search, and manage sports events. Whether you're a sports club, a private coach, or just looking for local events, SportHub provides a user-friendly interface to do so.
 ## Features 
 - **User Registration & Authentication**: Users can register, log in, and create their events. 
 - **Event Creation & Management**: Users can add details, upload images, and manage registrations for their events. 
